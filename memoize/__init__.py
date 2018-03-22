@@ -21,6 +21,7 @@ class DefaultCacheObject(object):
 
 
 DEFAULT_CACHE_OBJECT = DefaultCacheObject()
+NONE_PLACEHOLDER = '_!@#_!NONE_!@#_$_!_#'
 
 
 def _get_argspec(f):
@@ -94,10 +95,15 @@ class Memoizer(object):
 
     def get(self, key):
         "Proxy function for internal cache object."
-        return self.cache.get(key=key, default=self.default_cache_value)
+        v = self.cache.get(key=key, default=self.default_cache_value)
+        if v == NONE_PLACEHOLDER:
+            return None
+        return v
 
     def set(self, key, value, timeout=DEFAULT_TIMEOUT):
         "Proxy function for internal cache object."
+        if value == None:
+            value = NONE_PLACEHOLDER
         self.cache.set(key=key, value=value, timeout=timeout)
 
     def add(self, key, value, timeout=DEFAULT_TIMEOUT):
